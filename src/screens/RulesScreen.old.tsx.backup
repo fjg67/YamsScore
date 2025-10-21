@@ -1,0 +1,137 @@
+/**
+ * Écran des règles du jeu
+ */
+
+import React from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useAppSelector } from '../store/hooks';
+import { getColors, CategoryLabels, CategoryDescriptions } from '../constants';
+
+const RulesScreen: React.FC = () => {
+  const navigation = useNavigation();
+  const theme = useAppSelector((state) => state.settings.theme);
+  const colors = getColors(theme);
+
+  return (
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text style={[styles.backButton, { color: colors.primary }]}>
+            ← Retour
+          </Text>
+        </TouchableOpacity>
+        <Text style={[styles.title, { color: colors.text }]}>
+          Règles du Yams
+        </Text>
+      </View>
+
+      <ScrollView style={styles.content}>
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            Section Supérieure
+          </Text>
+          <Text style={[styles.description, { color: colors.textSecondary }]}>
+            Pour chaque catégorie (1 à 6), additionner les dés montrant cette valeur.
+          </Text>
+          <Text style={[styles.bonus, { color: colors.secondary }]}>
+            Bonus : +35 points si le total ≥ 63
+          </Text>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            Section Inférieure
+          </Text>
+
+          {Object.entries(CategoryLabels)
+            .slice(6)
+            .map(([key, label]) => (
+              <View key={key} style={styles.ruleItem}>
+                <Text style={[styles.ruleLabel, { color: colors.text }]}>
+                  {label}
+                </Text>
+                <Text style={[styles.ruleDescription, { color: colors.textSecondary }]}>
+                  {CategoryDescriptions[key as keyof typeof CategoryDescriptions]}
+                </Text>
+              </View>
+            ))}
+        </View>
+
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            Déroulement
+          </Text>
+          <Text style={[styles.description, { color: colors.textSecondary }]}>
+            • Chaque joueur joue à tour de rôle{'\n'}
+            • 3 lancers maximum par tour{'\n'}
+            • Possibilité de garder des dés entre les lancers{'\n'}
+            • Une fois une catégorie remplie, elle ne peut plus être modifiée{'\n'}
+            • La partie se termine quand toutes les catégories sont remplies{'\n'}
+            • Le joueur avec le score le plus élevé gagne
+          </Text>
+        </View>
+      </ScrollView>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    padding: 20,
+    paddingTop: 60,
+  },
+  backButton: {
+    fontSize: 16,
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  content: {
+    flex: 1,
+  },
+  section: {
+    padding: 20,
+    paddingTop: 24,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  description: {
+    fontSize: 14,
+    lineHeight: 22,
+    marginBottom: 8,
+  },
+  bonus: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginTop: 8,
+  },
+  ruleItem: {
+    marginBottom: 16,
+  },
+  ruleLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  ruleDescription: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+});
+
+export default RulesScreen;
